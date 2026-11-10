@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck Title</title>
+<!-- Replace families with design.md fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap">
+<style>
+/* ==== BRAND TOKENS — paste from design.md ==== */
+:root{
+  --primary:#1e40af; --accent:#f59e0b;
+  --text:#111111; --bg:#ffffff; --surface:#f4f4f5; --muted:#6b7280;
+  --font-heading:'Inter'; --font-body:'Inter'; --radius:12px;
+  --on-primary:#ffffff;
+}
+/* ============================================ */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#222;font-family:var(--font-body),system-ui,sans-serif;color:var(--text)}
+.slide{width:1280px;height:720px;margin:24px auto;background:var(--bg);position:relative;overflow:hidden;
+  padding:72px 88px;display:flex;flex-direction:column;page-break-after:always;break-after:page}
+h1,h2,h3{font-family:var(--font-heading),system-ui,sans-serif;line-height:1.1;letter-spacing:-.01em}
+h1{font-size:64px;font-weight:800}
+h2{font-size:44px;font-weight:700;margin-bottom:32px;max-width:1000px}
+h3{font-size:24px;font-weight:700;margin-bottom:8px}
+p,li{font-size:24px;line-height:1.45}
+.muted{color:var(--muted)}
+.kicker{font-size:16px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin-bottom:16px}
+.logo{position:absolute;right:56px;bottom:40px;height:32px}
+.logo img{height:100%;width:auto;display:block}
+.pagenum{position:absolute;left:88px;bottom:40px;font-size:14px;color:var(--muted)}
+.notes{display:none}
+
+/* Layouts */
+.cover{justify-content:center}
+.cover .logo{position:static;height:64px;margin-bottom:48px}
+.cover p{font-size:28px;margin-top:20px;max-width:900px}
+.dark{background:var(--primary);color:var(--on-primary)}
+.dark .kicker,.dark .muted,.dark .pagenum{color:var(--on-primary);opacity:.75}
+.section{justify-content:center}
+.bignum{justify-content:center}
+.bignum .value{font-family:var(--font-heading);font-size:180px;font-weight:800;color:var(--primary);line-height:1}
+.dark.bignum .value{color:var(--on-primary)}
+.bignum p{font-size:30px;max-width:900px;margin-top:16px}
+.cols{display:grid;gap:32px;flex:1;align-content:start}
+.cols-2{grid-template-columns:1fr 1fr}.cols-3{grid-template-columns:repeat(3,1fr)}.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--surface);border-radius:var(--radius);padding:32px}
+.card .num{font-family:var(--font-heading);font-size:56px;font-weight:800;color:var(--primary)}
+.card p{font-size:20px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;flex:1;align-items:center}
+.split img{width:100%;border-radius:var(--radius);object-fit:cover;max-height:520px}
+ul.bullets{list-style:none}
+ul.bullets li{padding-left:28px;position:relative;margin-bottom:14px}
+ul.bullets li::before{content:"";position:absolute;left:0;top:14px;width:12px;height:12px;border-radius:3px;background:var(--accent)}
+.quote blockquote{font-family:var(--font-heading);font-size:44px;font-weight:600;line-height:1.25;max-width:1000px}
+.quote cite{display:block;margin-top:28px;font-size:20px;font-style:normal;color:var(--muted)}
+.timeline{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:20px;border-top:4px solid var(--primary);padding-top:28px}
+.timeline .when{font-weight:700;color:var(--primary);font-size:18px;margin-bottom:6px}
+.timeline p{font-size:18px}
+table.compare{width:100%;border-collapse:collapse;font-size:20px}
+table.compare th,table.compare td{padding:14px 16px;text-align:left;border-bottom:1px solid #e5e7eb}
+table.compare th{font-family:var(--font-heading);color:var(--muted);font-weight:600}
+table.compare .us{background:color-mix(in srgb,var(--primary) 10%,transparent);font-weight:700}
+.chart{flex:1;display:flex;align-items:flex-end;gap:28px;padding-top:20px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.bar .fill{width:100%;background:#d4d4d8;border-radius:var(--radius) var(--radius) 0 0}
+.bar.hl .fill{background:var(--primary)}
+.bar .v{font-weight:700;font-size:20px;margin-bottom:8px}
+.bar .l{font-size:16px;color:var(--muted);margin-top:10px}
+.placeholder{background:#fef3c7;color:#92400e;padding:0 6px;border-radius:4px}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:none}
+  .slide{margin:0}
+}
+</style>
+</head>
+<body>
+
+<!-- LAYOUTS: cover | section (+dark) | bignum (+dark) | cols cols-2/3/4 with .card | split | quote | timeline | compare table | chart (bars, height = % of max, .hl = highlight) -->
+<!-- Logo: logo file from design.md. Use logo-white on .dark slides if available. -->
+
+<section class="slide cover">
+  <div class="logo"><img src="assets/logo.svg" alt="Company logo"></div>
+  <div class="kicker">Context · Date</div>
+  <h1>Deck title as a clear promise</h1>
+  <p class="muted">One-line subtitle: who it's for and what they'll get.</p>
+  <aside class="notes">Speaker notes. Sources go here.</aside>
+</section>
+
+<section class="slide bignum dark">
+  <div class="kicker">The problem</div>
+  <div class="value">73%</div>
+  <p>of X still do Y manually — costing <span class="placeholder">[[NUMBER: cost]]</span> a year.</p>
+  <div class="pagenum">2</div>
+  <aside class="notes">Source: …</aside>
+</section>
+
+<section class="slide">
+  <div class="kicker">Solution</div>
+  <h2>Three things change when you switch</h2>
+  <div class="cols cols-3">
+    <div class="card"><div class="num">01</div><h3>Faster</h3><p>Short explanation.</p></div>
+    <div class="card"><div class="num">02</div><h3>Cheaper</h3><p>Short explanation.</p></div>
+    <div class="card"><div class="num">03</div><h3>Safer</h3><p>Short explanation.</p></div>
+  </div>
+  <div class="pagenum">3</div>
+  <div class="logo"><img src="assets/logo.svg" alt=""></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Traction</div>
+  <h2>Revenue tripled in 12 months</h2>
+  <div class="chart">
+    <div class="bar"><div class="v">1.2M</div><div class="fill" style="height:33%"></div><div class="l">Q1</div></div>
+    <div class="bar"><div class="v">1.9M</div><div class="fill" style="height:53%"></div><div class="l">Q2</div></div>
+    <div class="bar"><div class="v">2.6M</div><div class="fill" style="height:72%"></div><div class="l">Q3</div></div>
+    <div class="bar hl"><div class="v">3.6M</div><div class="fill" style="height:100%"></div><div class="l">Q4</div></div>
+  </div>
+  <div class="pagenum">4</div>
+  <div class="logo"><img src="assets/logo.svg" alt=""></div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Roadmap</div>
+  <h2>Live in 90 days</h2>
+  <div class="timeline">
+    <div><div class="when">Week 1–2</div><h3>Kick-off</h3><p>Scope and access.</p></div>
+    <div><div class="when">Week 3–8</div><h3>Pilot</h3><p>One team, real data.</p></div>
+    <div><div class="when">Week 9–12</div><h3>Rollout</h3><p>All teams, training.</p></div>
+  </div>
+  <div class="pagenum">5</div>
+  <div class="logo"><img src="assets/logo.svg" alt=""></div>
+</section>
+
+<section class="slide cover">
+  <div class="logo"><img src="assets/logo.svg" alt="Company logo"></div>
+  <h1>Next step: a 30-minute pilot scoping call</h1>
+  <p class="muted">name@company.com · company.com</p>
+</section>
+
+</body>
+</html>
