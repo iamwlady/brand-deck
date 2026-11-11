@@ -1,6 +1,6 @@
 ---
 name: brand-deck
-description: Build an on-brand presentation for a company from its website. Extracts the site's design into design.md, grabs the logo, asks for a brandbook and the presentation goal, researches the best structure, then builds the deck. Use when the user gives a company website and wants a presentation in that company's look.
+description: Build an on-brand deck from a company website or social profiles (Instagram, LinkedIn…): extracts design.md and logo, asks brandbook and goal, researches, builds.
 ---
 
 # Brand Deck
@@ -9,29 +9,45 @@ Six steps, in order. Don't skip the questions in steps 2–3; everything else ru
 
 Working folder: `./<company-slug>/` containing `design.md`, `assets/`, `outline.md`, `deck.html` (and `deck.pptx` / `deck.pdf` if asked).
 
-## 1. Website → design.md
+## 1. Sources → design.md
 
-Ask for the website URL if not given. Then:
+Ask for the website **and/or** social profiles (Instagram, Facebook, LinkedIn, TikTok, Behance, Pinterest…) if not given. Use every source you get.
 
+**Website**
 ```bash
 python3 scripts/extract_brand.py <url> --out ./<company-slug>
 ```
+Writes `design.md` (colors, fonts, logo, tone samples) and downloads the logo into `assets/`.
+If the script can't reach the site, read the page and CSS with a browser or WebFetch and fill `templates/design.template.md` by hand.
 
-The script writes `design.md` (colors, fonts, logo, tone samples) and downloads the logo into `assets/`.
+**Social profiles** (run after the website, so design.md isn't overwritten)
+```bash
+python3 scripts/capture_social.py <profile-url> [<profile-url> ...] --out ./<company-slug>
+```
+Per profile it saves the profile picture (usually the logo), up to 12 post images (download, or an element screenshot when download fails), viewport + full-page screenshots, color palettes, a contact sheet → `social.md` + `assets/social/<platform-handle>/`. If there was no website, it also creates `design.md` from the social colors.
 
-If the script can't reach the site (network blocked, JS-only site, bot protection), use a browser or WebFetch to read the page and the CSS, then fill `templates/design.template.md` by hand. Same output either way.
+Profiles marked **BLOCKED** (login wall, bot check, empty page) are not bypassed. Fallback, in order:
+1. **Signed-in browser** — if a browser tool is available (built-in browser or Claude in Chrome, where the user is logged in): open the profile, take screenshots of the header (avatar + bio), the grid, and 6–9 representative posts opened one by one. Save them into a folder, avatar as `logo.png`/`avatar.png`.
+2. **Ask the user** — for screenshots of the profile and a few posts, and the profile picture / logo file.
+3. Then analyse them the same way:
+```bash
+python3 scripts/capture_social.py --images <screenshots-folder> --out ./<company-slug>
+```
 
-Then **check the result yourself**:
-- Look at the logo file. If it's a favicon, a partner logo or a broken image, find the real one (header `<img>`/`<svg>`, footer, `/press`, `/brand`, `og:image`). Prefer SVG.
-- Sanity-check the palette: the most frequent hex is often `#fff`/`#000`. Pick the real **primary** (buttons, links, CTAs) and **accent** by looking at where colors are used, not just counts.
-- If a font is not on Google Fonts, pick the closest Google Font and note the substitution in design.md.
+Then **check the result yourself** (Read the images — don't trust the numbers blindly):
+- **Logo**: look at the website logo file and the social avatar. If the website one is a favicon, a partner logo or broken, find the real one (header `<img>`/`<svg>`, footer, `/press`, `/brand`). Prefer SVG. A social avatar is raster and often cropped in a circle — use it only if nothing better exists, and ask the user for a vector file.
+- **Palette**: the most frequent hex is often `#fff`/`#000` or platform UI. Pick the real **primary** (buttons, CTAs, recurring color in posts) and **accent** by looking at where colors are used. Photo-heavy feeds give noisy palettes — trust recurring graphic colors over photo colors.
+- **Typography from social**: look at the contact sheets, identify the typefaces used in post graphics (serif/sans/display, weight, case) and pick the closest Google Fonts. Website fonts win if both exist.
+- **Visual style**: from the contact sheets note photo vs illustration, mood, recurring shapes/frames, logo placement — fill the "To fill after visual review" section of `social.md`.
+- Merge `social.md` findings into `design.md`, marking each value's source (`website` / `social` / `brandbook`). Priority: brandbook > website > social.
+- If a font is not on Google Fonts, pick the closest and note the substitution.
 
 ## 2. Brandbook
 
 Ask: *"Do you have a brandbook / brand guidelines (PDF, link, Figma)?"*
 
-- **Yes** → read it. The brandbook wins over the website on every conflict (colors, fonts, logo usage, clear space, do/don't). Update `design.md` and mark the source of each value (`brandbook` / `website`).
-- **No** → continue with the website-derived `design.md`. Say so in one line.
+- **Yes** → read it. The brandbook wins over website and social on every conflict (colors, fonts, logo usage, clear space, do/don't). Update `design.md` and mark the source of each value (`brandbook` / `website`).
+- **No** → continue with the website/social-derived `design.md`. Say so in one line.
 
 ## 3. Presentation goal
 
@@ -58,7 +74,8 @@ From `design.md`:
 - Colors → CSS variables in `templates/deck.html` (`--primary`, `--accent`, `--bg`, `--surface`, `--text`, `--muted`). Check contrast: body text ≥ 4.5:1 on its background; if the brand primary fails as text color, use it for shapes/accents only.
 - Fonts → heading and body font (Google Fonts link in the template).
 - Logo → `assets/logo.svg` (or .png) on the cover, closing slide and small in the corner of content slides. Use the light/white variant on dark backgrounds if one exists; otherwise put the logo on a light area. Never recolor, stretch or crop it.
-- Visual tone (rounded vs sharp corners, photo vs illustration, dense vs airy) → match what design.md says about the site.
+- Visual tone (rounded vs sharp corners, photo vs illustration, dense vs airy) → match design.md / social.md.
+- Imagery: post images from `assets/social/` can be used on slides when they're the company's own content and fit the message (cover, section breaks, product). Never use other people's content or images with platform UI in them.
 
 ## 6. Build the deck
 
