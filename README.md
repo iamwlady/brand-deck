@@ -13,9 +13,14 @@ Claude skill: give it a company website and/or social profiles → get a present
 
 **Claude Code**
 ```bash
-/plugin install <github-user>/brand-deck
+/plugin install brand-deck --marketplace iamwlady/brand-deck
 ```
-or copy `skills/brand-deck` into `~/.claude/skills/`.
+On older Claude Code versions, use two steps:
+```bash
+/plugin marketplace add iamwlady/brand-deck
+/plugin install brand-deck@iamwlady
+```
+Or copy `skills/brand-deck` into `~/.claude/skills/`.
 
 **claude.ai** — zip the `skills/brand-deck` folder and upload it under Customize → Skills.
 
